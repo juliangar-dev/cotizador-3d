@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cotizador 3D</title>
+  <meta name="description" content="Calculá el costo real y el precio sugerido de una impresión 3D a partir del archivo .gcode o .gcode.3mf." />
+  <meta name="theme-color" content="#f7f7f5" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f766e'/%3E%3Cpath d='M9 22h14M9 18h14M11 14h10M13 10h6' stroke='white' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <header class="encabezado">
+    <h1>Cotizador 3D</h1>
+    <p>Subí el archivo de impresión y calculá cuánto te cuesta de verdad y a cuánto venderla.</p>
+  </header>
+
+  <main>
+    <section class="tarjeta" id="carga">
+      <label class="zona" id="zona" for="archivo">
+        <input type="file" id="archivo" accept=".gcode,.gco,.g,.3mf" />
+        <strong>Elegí o arrastrá tu archivo</strong>
+        <span>.gcode o .gcode.3mf · se procesa en tu navegador, no se sube a ningún lado</span>
+      </label>
+      <button type="button" class="enlace" id="probar-ejemplo">¿No tenés uno a mano? Probá con un ejemplo de dos colores</button>
+      <div class="progreso" id="progreso" hidden>
+        <div class="barra"><span id="progreso-barra"></span></div>
+        <p id="progreso-texto">Leyendo…</p>
+      </div>
+      <p class="error" id="error" role="alert" hidden></p>
+    </section>
+
+    <div id="resultados" hidden>
+      <section class="tarjeta" id="impresion">
+        <div class="titulo-fila">
+          <h2 id="nombre-archivo">Impresión</h2>
+          <select id="placa" aria-label="Placa" hidden></select>
+        </div>
+        <div class="impresion-cuerpo">
+          <img id="miniatura" alt="Vista de la placa laminada" hidden />
+          <dl class="datos" id="datos"></dl>
+        </div>
+        <ul class="avisos" id="avisos"></ul>
+      </section>
+
+      <section class="tarjeta" id="filamentos">
+        <h2>Filamentos</h2>
+        <div class="tabla-envoltura">
+          <table class="tabla">
+            <thead>
+              <tr><th>Filamento y tipo</th><th class="num">Pieza</th><th class="num">Purgas</th><th class="num">Total</th></tr>
+            </thead>
+            <tbody id="tabla-filamentos"></tbody>
+          </table>
+        </div>
+        <p class="nota" id="nota-filamentos"></p>
+      </section>
+
+      <section class="tarjeta" id="costo">
+        <h2>Costo y precio</h2>
+        <div class="precio-final">
+          <span class="etiqueta">Precio sugerido</span>
+          <strong id="precio">$0</strong>
+          <span class="detalle" id="precio-detalle"></span>
+        </div>
+        <div class="margen">
+          <label for="margen">Margen de ganancia</label>
+          <div class="margen-control">
+            <div class="chips" id="chips-margen">
+              <button type="button" data-margen="30">30%</button>
+              <button type="button" data-margen="50">50%</button>
+              <button type="button" data-margen="100">100%</button>
+              <button type="button" data-margen="200">200%</button>
+            </div>
+            <div class="campo-unidad"><input type="number" id="margen" min="0" step="5" inputmode="decimal" /><span>%</span></div>
+          </div>
+        </div>
+        <div class="grafico" id="grafico" role="img" aria-label="Desglose del costo"></div>
+        <ul class="desglose" id="desglose"></ul>
+        <div class="globo" id="globo" hidden></div>
+      </section>
+
+      <section class="tarjeta" id="visor">
+        <div class="titulo-fila">
+          <h2>Vista previa</h2>
+          <span class="nota" id="capa-texto"></span>
+        </div>
+        <div class="lienzo" id="lienzo"><p class="nota">Cargando visor…</p></div>
+        <div class="capas">
+          <input type="range" id="capa" min="1" max="1" value="1" aria-label="Capa" />
+          <label class="check"><input type="checkbox" id="solo-capa" /> Sólo esta capa</label>
+        </div>
+        <ul class="leyenda" id="leyenda-visor"></ul>
+      </section>
+    </div>
+
+    <section class="tarjeta" id="ajustes">
+      <details id="ajustes-detalle">
+        <summary><h2>Ajustes de costo</h2><span class="nota">Se guardan en este dispositivo</span></summary>
+        <h3>Precio del filamento por kg</h3>
+        <p class="nota">Cargá lo que te sale el rollo de 1 kg de cada tipo.</p>
+        <div class="grilla-precios" id="precios"></div>
+
+        <h3>Máquina</h3>
+        <div class="grilla-campos">
+          <label>Potencia promedio
+            <span class="campo-unidad"><input type="number" id="potenciaW" min="0" step="5" inputmode="decimal" /><span>W</span></span>
+            <small>Una impresora de escritorio consume en promedio entre 80 y 150 W.</small>
+          </label>
+          <label>Tarifa de luz
+            <span class="campo-unidad"><input type="number" id="tarifaKwh" min="0" step="1" inputmode="decimal" /><span>$/kWh</span></span>
+            <small>Mirá el precio por kWh en tu factura, con impuestos.</small>
+          </label>
+          <label>Desgaste
+            <span class="campo-unidad"><input type="number" id="desgasteHora" min="0" step="10" inputmode="decimal" /><span>$/h</span></span>
+            <small>Repuestos y amortización de la impresora por hora de uso.</small>
+          </label>
+          <label>Margen de fallas
+            <span class="campo-unidad"><input type="number" id="fallasPct" min="0" step="1" inputmode="decimal" /><span>%</span></span>
+            <small>Extra por impresiones que salen mal.</small>
+          </label>
+        </div>
+        <button type="button" class="enlace" id="restablecer">Volver a los valores por defecto</button>
+      </details>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <p>Todo se calcula en tu navegador. Los archivos no se suben a ningún servidor.</p>
+  </footer>
+
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
