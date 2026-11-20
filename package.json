@@ -1,0 +1,21 @@
+{
+  "name": "cotizador-3d",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Calcula el costo real y el precio sugerido de una impresión 3D a partir del archivo de impresión.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "node --test pruebas/",
+    "generar-ejemplo": "node scripts/generar-gcode-prueba.mjs"
+  },
+  "dependencies": {
+    "fflate": "^0.8.3",
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "vite": "^8.3.8"
+  }
+}
