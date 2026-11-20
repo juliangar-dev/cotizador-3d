@@ -36,8 +36,8 @@ Valores por defecto (editables): 120 W de potencia promedio, 200 $/kWh, 200 $/h 
 
 - [Vite](https://vite.dev/) para el sitio estático.
 - [three.js](https://threejs.org/) para la vista 3D.
-- [fflate](https://github.com/101arrowz/fflate) para abrir los `.3mf` (son zip).
-- Web Worker para leer archivos grandes sin trabar la página.
+- [fflate](https://github.com/101arrowz/fflate) para abrir los `.3mf` (son archivos comprimidos zip).
+- Un Web Worker (un hilo aparte del navegador) para leer archivos grandes sin trabar la página.
 - GitHub Actions para publicar en GitHub Pages.
 
 ## Cómo correrlo

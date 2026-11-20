@@ -5,6 +5,9 @@ import { analizarGcode } from './gcode.js';
 import { esZip, leerTresMf } from './tres-mf.js';
 import { armarResumen } from './resumen.js';
 
+/** Error con un mensaje pensado para mostrarle a la persona (en español). */
+export class ErrorLector extends Error {}
+
 /**
  * @param {Uint8Array} bytes
  * @param {{ geometria?: boolean, alProgresar?: (f:number, etapa:string)=>void }} opciones
@@ -14,9 +17,14 @@ export function procesarArchivo(bytes, opciones = {}) {
 
   if (esZip(bytes)) {
     avisar(0, 'Descomprimiendo el proyecto');
-    const placas = leerTresMf(bytes);
+    let placas;
+    try {
+      placas = leerTresMf(bytes);
+    } catch {
+      throw new ErrorLector('No se pudo abrir el .3mf: puede estar dañado o incompleto.');
+    }
     if (!placas.length) {
-      throw new Error('El .3mf no tiene G-code. Laminá el proyecto y exportalo como "G-code 3mf" (Exportar placa laminada).');
+      throw new ErrorLector('El .3mf no tiene G-code. Laminá el proyecto y exportalo como "G-code 3mf" (Exportar placa laminada).');
     }
     return {
       formato: '3mf',
@@ -39,7 +47,7 @@ export function procesarArchivo(bytes, opciones = {}) {
   avisar(0, 'Leyendo el G-code');
   const texto = new TextDecoder('utf-8').decode(bytes);
   if (!/^\s*[;GMT]/m.test(texto.slice(0, 5000))) {
-    throw new Error('El archivo no parece un G-code.');
+    throw new ErrorLector('El archivo no parece un G-code.');
   }
   const g = analizarGcode(texto, { geometria: opciones.geometria, alProgresar: (f) => avisar(f, 'Leyendo el G-code') });
   return {

@@ -1,5 +1,5 @@
 // Web Worker: lee el archivo fuera del hilo principal para que la página no se trabe.
-import { procesarArchivo } from './procesar.js';
+import { procesarArchivo, ErrorLector } from './procesar.js';
 
 self.onmessage = (ev) => {
   const { id, buffer } = ev.data;
@@ -30,6 +30,10 @@ self.onmessage = (ev) => {
     }
     self.postMessage({ id, tipo: 'listo', resultado }, transferibles);
   } catch (err) {
-    self.postMessage({ id, tipo: 'error', mensaje: err?.message || String(err) });
+    // Los errores de las librerías vienen en inglés: mostramos uno propio.
+    const mensaje = err instanceof ErrorLector
+      ? err.message
+      : 'No se pudo leer el archivo. Revisá que esté completo y que sea un .gcode o .gcode.3mf.';
+    self.postMessage({ id, tipo: 'error', mensaje });
   }
 };
