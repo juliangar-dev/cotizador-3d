@@ -8,7 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node --test pruebas/",
+    "test": "node --test \"pruebas/*.test.js\"",
     "generar-ejemplo": "node scripts/generar-gcode-prueba.mjs"
   },
   "dependencies": {

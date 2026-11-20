@@ -1,0 +1,10 @@
+{
+  "capas": 10,
+  "alturaCapa": 0.3,
+  "extrusionTotal": 32,
+  "dimensiones": {
+    "x": 20,
+    "y": 20,
+    "z": 3
+  }
+}

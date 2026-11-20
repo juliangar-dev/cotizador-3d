@@ -1,0 +1,21 @@
+{
+  "capas": 40,
+  "alturaCapa": 0.2,
+  "extrusion": [
+    {
+      "pieza": 60.224,
+      "purga": 63,
+      "torre": 26.4
+    },
+    {
+      "pieza": 60.416,
+      "purga": 80,
+      "torre": 26.4
+    }
+  ],
+  "dimensiones": {
+    "x": 32,
+    "y": 32,
+    "z": 8
+  }
+}
